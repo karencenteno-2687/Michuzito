@@ -1,0 +1,130 @@
+{% extends "productos/base.html" %}
+{% load static %}
+
+{% block title %}Alertas de Stock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0">Alertas de Stock</h1>
+    <a href="{% url 'productos:inventario' %}" class="btn btn-outline-warning">Ir a Inventario</a>
+</div>
+
+<div class="card bg-dark border-secondary mb-4">
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small text-muted">Filtrar por estado</label>
+                <select class="form-select" id="stockFilter"
+                        hx-get="{% url 'productos:htmx_stock_filter' %}"
+                        hx-trigger="change"
+                        hx-target="#alertasContainer"
+                        hx-indicator="#filterIndicator">
+                    <option value="">Todos</option>
+                    <option value="agotados">Agotados (stock 0)</option>
+                    <option value="pocas">Pocas unidades (1-{{ umbral }})</option>
+                    <option value="en_stock">En stock (>{{ umbral }})</option>
+                    <option value="criticos">Críticos (≤{{ umbral }})</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted">Categoría</label>
+                <select class="form-select" id="categoryFilter"
+                        hx-get="{% url 'productos:htmx_stock_filter' %}"
+                        hx-trigger="change"
+                        hx-target="#alertasContainer"
+                        hx-indicator="#filterIndicator">
+                    <option value="">Todas</option>
+                    {% for cat in categorias %}
+                    <option value="{{ cat.id }}">{{ cat.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <div id="filterIndicator" class="htmx-indicator text-warning">
+                    <small>Filtrando...</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alertasContainer">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-danger h-100">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">Agotados</span>
+                    <span class="badge bg-light text-danger fs-6">{{ agotados|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if agotados %}
+                    <ul class="list-group list-group-flush bg-transparent">
+                        {% for p in agotados %}
+                        <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center border-secondary">
+                            <div>
+                                <strong>{{ p.nombre }}</strong>
+                                <br><small class="text-muted">{{ p.categoria.nombre }}</small>
+                            </div>
+                            <span class="badge bg-danger">0</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted mb-0">No hay productos agotados.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">Pocas Unidades</span>
+                    <span class="badge bg-dark text-warning fs-6">{{ pocas_unidades|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if pocas_unidades %}
+                    <ul class="list-group list-group-flush bg-transparent">
+                        {% for p in pocas_unidades %}
+                        <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center border-secondary">
+                            <div>
+                                <strong>{{ p.nombre }}</strong>
+                                <br><small class="text-muted">{{ p.categoria.nombre }}</small>
+                            </div>
+                            <span class="badge bg-warning text-dark">{{ p.stock }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted mb-0">No hay productos con stock bajo.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-success h-100">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">En Stock</span>
+                    <span class="badge bg-light text-success fs-6">{{ en_stock|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if en_stock %}
+                    <ul class="list-group list-group-flush bg-transparent">
+                        {% for p in en_stock %}
+                        <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center border-secondary">
+                            <div>
+                                <strong>{{ p.nombre }}</strong>
+                                <br><small class="text-muted">{{ p.categoria.nombre }}</small>
+                            </div>
+                            <span class="badge bg-success">{{ p.stock }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted mb-0">No hay productos en stock.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

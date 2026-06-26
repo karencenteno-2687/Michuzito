@@ -1,0 +1,79 @@
+{% extends "productos/base.html" %}
+{% load static %}
+
+{% block title %}Editar Producto{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 fw-bold mb-0">Editar: {{ producto.nombre }}</h1>
+            <a href="{% url 'productos:list' %}" class="btn btn-outline-secondary">Volver</a>
+        </div>
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre</label>
+                            {{ form.nombre }}
+                            {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Categoría</label>
+                            {{ form.categoria }}
+                            {% if form.categoria.errors %}<div class="text-danger small mt-1">{{ form.categoria.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Descripción</label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.errors %}<div class="text-danger small mt-1">{{ form.descripcion.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Precio</label>
+                            {{ form.precio }}
+                            {% if form.precio.errors %}<div class="text-danger small mt-1">{{ form.precio.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Stock</label>
+                            {{ form.stock }}
+                            {% if form.stock.errors %}<div class="text-danger small mt-1">{{ form.stock.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Tiempo Preparación (min)</label>
+                            {{ form.tiempo_preparacion }}
+                            {% if form.tiempo_preparacion.errors %}<div class="text-danger small mt-1">{{ form.tiempo_preparacion.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Ingredientes</label>
+                            {{ form.ingredientes }}
+                            {% if form.ingredientes.errors %}<div class="text-danger small mt-1">{{ form.ingredientes.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Imagen</label>
+                            {{ form.imagen }}
+                            {% if form.imagen.errors %}<div class="text-danger small mt-1">{{ form.imagen.errors.0 }}</div>{% endif %}
+                            {% if producto.imagen %}
+                            <div class="mt-2">
+                                <img src="{{ producto.imagen.url }}" class="img-thumbnail" style="max-height: 100px;" alt="Actual">
+                                <small class="d-block text-muted">Imagen actual. Sube una nueva para reemplazarla.</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Estado</label>
+                            {{ form.estado }}
+                            {% if form.estado.errors %}<div class="text-danger small mt-1">{{ form.estado.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-warning fw-bold px-4">Actualizar Producto</button>
+                        <a href="{% url 'productos:list' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

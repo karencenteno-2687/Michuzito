@@ -1,0 +1,108 @@
+{% extends "productos/base.html" %}
+{% load static %}
+
+{% block title %}Catálogo de Productos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-0">Catálogo de Productos</h1>
+        <p class="text-muted mb-0">
+            <span class="badge bg-warning text-dark me-1">{{ activos }}</span> activos ·
+            <span class="badge bg-danger me-1">{{ agotados }}</span> agotados ·
+            <span class="badge bg-secondary">{{ total_productos }}</span> total
+        </p>
+    </div>
+    <a href="{% url 'productos:create' %}" class="btn btn-warning fw-bold">
+        + Nuevo Producto
+    </a>
+</div>
+
+<div class="card bg-dark border-secondary mb-4">
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label small text-muted">Buscar</label>
+                <input type="text"
+                       id="searchInput"
+                       class="form-control"
+                       placeholder="Nombre, categoría o ingredientes..."
+                       hx-get="{% url 'productos:htmx_search' %}"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-target="#productosContainer"
+                       hx-indicator="#searchIndicator">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted">Filtrar por</label>
+                <select id="filterSelect" class="form-select"
+                        hx-get="{% url 'productos:htmx_filter' %}"
+                        hx-trigger="change"
+                        hx-target="#productosContainer"
+                        hx-indicator="#searchIndicator">
+                    <option value="">Todos</option>
+                    <option value="disponibles">Disponibles</option>
+                    <option value="agotados">Agotados</option>
+                    <option value="menor_precio">Menor Precio</option>
+                    <option value="mayor_precio">Mayor Precio</option>
+                    <option value="recientes">Más Recientes</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted">Categoría</label>
+                <select id="categoryFilter" class="form-select"
+                        hx-get="{% url 'productos:htmx_filter' %}"
+                        hx-trigger="change"
+                        hx-target="#productosContainer"
+                        hx-indicator="#searchIndicator">
+                    <option value="">Todas</option>
+                    {% for cat in categorias %}
+                    <option value="{{ cat.id }}">{{ cat.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <div id="searchIndicator" class="htmx-indicator text-warning">
+                    <small>Cargando...</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="productosContainer">
+    {% include "productos/_product_cards.html" %}
+</div>
+
+<div class="modal fade" id="productoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark" id="modalContent">
+            <div class="modal-body text-center py-5">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const filterSelect = document.getElementById('filterSelect');
+        const categoryFilter = document.getElementById('categoryFilter');
+
+        function updateFilters() {
+            const params = new URLSearchParams();
+            if (filterSelect.value) params.set('filtro', filterSelect.value);
+            if (categoryFilter.value) params.set('categoria', categoryFilter.value);
+            const url = "{% url 'productos:htmx_filter' %}?" + params.toString();
+            htmx.ajax('GET', url, {target: '#productosContainer'});
+        }
+
+        filterSelect.addEventListener('change', updateFilters);
+        categoryFilter.addEventListener('change', updateFilters);
+    });
+</script>
+{% endblock %}

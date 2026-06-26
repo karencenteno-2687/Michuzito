@@ -1,0 +1,22 @@
+{% load static %}
+{% if productos %}
+<ul class="list-group list-group-flush bg-transparent">
+    {% for p in productos %}
+    <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center border-secondary">
+        <div>
+            <strong>{{ p.nombre }}</strong>
+            <br><small class="text-muted">{{ p.categoria.nombre }}</small>
+        </div>
+        {% if p.stock == 0 %}
+        <span class="badge bg-danger">{{ p.stock }}</span>
+        {% elif p.stock <= umbral %}
+        <span class="badge bg-warning text-dark">{{ p.stock }}</span>
+        {% else %}
+        <span class="badge bg-success">{{ p.stock }}</span>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="text-muted mb-0 py-3 text-center">No se encontraron productos con este filtro.</p>
+{% endif %}

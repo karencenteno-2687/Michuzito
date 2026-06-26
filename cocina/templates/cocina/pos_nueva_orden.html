@@ -1,0 +1,180 @@
+{% extends "productos/base.html" %}
+{% load static %}
+
+{% block title %}Nueva Orden{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'cocina/css/cocina.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0">Nueva Orden</h1>
+    <a href="{% url 'cocina:dashboard' %}" class="btn btn-outline-secondary">Volver a Cocina</a>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-7">
+        <div class="card bg-dark border-secondary mb-3">
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-8">
+                        <input type="text" id="posSearch" class="form-control"
+                               placeholder="Buscar producto..."
+                               hx-get="{% url 'cocina:htmx_pos_productos' %}"
+                               hx-trigger="keyup changed delay:300ms"
+                               hx-target="#posProductos"
+                               hx-indicator="#posIndicator">
+                    </div>
+                    <div class="col-md-4">
+                        <select id="posCategory" class="form-select"
+                                hx-get="{% url 'cocina:htmx_pos_productos' %}"
+                                hx-trigger="change"
+                                hx-target="#posProductos"
+                                hx-indicator="#posIndicator">
+                            <option value="">Todas</option>
+                            {% for cat in categorias %}
+                            <option value="{{ cat }}">{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div id="posIndicator" class="htmx-indicator text-warning mt-1">
+                    <small>Cargando...</small>
+                </div>
+            </div>
+        </div>
+        <div class="row g-2" id="posProductos">
+            {% include "cocina/_pos_productos.html" %}
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="fw-bold mb-0">Carrito</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label small">Cliente / Mesa</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <input type="text" id="pedidoCliente" class="form-control" placeholder="Cliente">
+                        </div>
+                        <div class="col-6">
+                            <input type="number" id="pedidoMesa" class="form-control" placeholder="Mesa" min="1">
+                        </div>
+                    </div>
+                </div>
+                <div id="carritoItems" class="mb-3">
+                    <div class="text-center text-muted py-4">
+                        <p>Selecciona productos para agregar al carrito</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">Nota para cocina</label>
+                    <textarea id="pedidoNota" class="form-control" rows="2" placeholder="Observaciones..."></textarea>
+                </div>
+                <hr class="border-secondary">
+                <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                    <span>Total:</span>
+                    <span class="text-warning" id="pedidoTotal">$0.00</span>
+                </div>
+                <button id="btnEnviarOrden" class="btn btn-warning w-100 fw-bold" disabled>
+                    Enviar a Cocina
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'cocina/js/cocina.js' %}"></script>
+<script>
+var carrito = [];
+
+function actualizarCarrito() {
+    var container = document.getElementById('carritoItems');
+    var total = 0;
+    var html = '';
+    if (carrito.length === 0) {
+        html = '<div class="text-center text-muted py-4"><p>Selecciona productos para agregar al carrito</p></div>';
+        document.getElementById('btnEnviarOrden').disabled = true;
+    } else {
+        html = '<div class="list-group list-group-flush bg-transparent">';
+        carrito.forEach(function(item, index) {
+            var subtotal = item.precio * item.cantidad;
+            total += subtotal;
+            html += '<div class="list-group-item bg-transparent text-white border-secondary d-flex justify-content-between align-items-center">';
+            html += '<div><strong>' + item.nombre + '</strong>';
+            if (item.nota) html += '<br><small class="text-info">📝 ' + item.nota + '</small>';
+            html += '</div>';
+            html += '<div class="d-flex align-items-center gap-2">';
+            html += '<button class="btn btn-sm btn-outline-secondary" onclick="cambiarCantidad(' + index + ', -1)">-</button>';
+            html += '<span class="fw-bold">' + item.cantidad + '</span>';
+            html += '<button class="btn btn-sm btn-outline-secondary" onclick="cambiarCantidad(' + index + ', 1)">+</button>';
+            html += '<span class="text-warning ms-2">$' + subtotal.toLocaleString() + '</span>';
+            html += '<button class="btn btn-sm btn-outline-danger ms-1" onclick="eliminarItem(' + index + ')">✕</button>';
+            html += '</div></div>';
+        });
+        html += '</div>';
+        document.getElementById('btnEnviarOrden').disabled = false;
+    }
+    container.innerHTML = html;
+    document.getElementById('pedidoTotal').textContent = '$' + total.toLocaleString();
+}
+
+window.agregarAlCarrito = function(productoId, nombre, precio) {
+    var idx = carrito.findIndex(function(i) { return i.id === productoId; });
+    if (idx >= 0) {
+        carrito[idx].cantidad += 1;
+    } else {
+        carrito.push({id: productoId, nombre: nombre, precio: precio, cantidad: 1, nota: ''});
+    }
+    actualizarCarrito();
+};
+
+window.cambiarCantidad = function(index, delta) {
+    carrito[index].cantidad = Math.max(1, carrito[index].cantidad + delta);
+    actualizarCarrito();
+};
+
+window.eliminarItem = function(index) {
+    carrito.splice(index, 1);
+    actualizarCarrito();
+};
+
+document.getElementById('btnEnviarOrden').addEventListener('click', function() {
+    if (carrito.length === 0) return;
+    var items = carrito.map(function(i) {
+        return {producto_id: i.id, cantidad: i.cantidad, nota: i.nota};
+    });
+    var data = {
+        items: items,
+        cliente: document.getElementById('pedidoCliente').value,
+        mesa: document.getElementById('pedidoMesa').value,
+        nota: document.getElementById('pedidoNota').value
+    };
+    fetch('{% url "cocina:crear_orden" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(result) {
+        if (result.success) {
+            carrito = [];
+            actualizarCarrito();
+            document.getElementById('pedidoCliente').value = '';
+            document.getElementById('pedidoMesa').value = '';
+            document.getElementById('pedidoNota').value = '';
+            alert('Orden #' + result.orden_id + ' enviada a cocina!');
+            window.location.href = '{% url "cocina:dashboard" %}';
+        }
+    });
+});
+</script>
+{% endblock %}

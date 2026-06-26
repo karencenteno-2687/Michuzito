@@ -1,0 +1,232 @@
+:root {
+    --black: #121212;
+    --orange: #FF7A00;
+    --green: #22C55E;
+    --white: #FFFFFF;
+}
+
+body {
+    background-color: var(--black);
+    color: var(--white);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+}
+
+.navbar {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: #1a1a1a;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(255, 122, 0, 0.15);
+}
+
+.producto-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #2a2a2a;
+}
+
+.producto-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(255, 122, 0, 0.2);
+    border-color: var(--orange);
+}
+
+.btn-warning {
+    background-color: var(--orange);
+    border-color: var(--orange);
+    color: var(--white);
+}
+
+.btn-warning:hover {
+    background-color: #e06e00;
+    border-color: #e06e00;
+    color: var(--white);
+}
+
+.btn-outline-warning {
+    color: var(--orange);
+    border-color: var(--orange);
+}
+
+.btn-outline-warning:hover {
+    background-color: var(--orange);
+    color: var(--white);
+}
+
+.text-warning {
+    color: var(--orange) !important;
+}
+
+.bg-warning {
+    background-color: var(--orange) !important;
+}
+
+.border-warning {
+    border-color: var(--orange) !important;
+}
+
+.badge.bg-success {
+    background-color: var(--green) !important;
+}
+
+.form-control, .form-select {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+    color: var(--white);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #2a2a2a;
+    border-color: var(--orange);
+    color: var(--white);
+    box-shadow: 0 0 0 0.25rem rgba(255, 122, 0, 0.25);
+}
+
+.form-control::placeholder {
+    color: #6c757d;
+}
+
+.table-dark {
+    background-color: #1a1a1a;
+}
+
+.table-dark td, .table-dark th {
+    border-color: #2a2a2a;
+}
+
+.modal-content {
+    background-color: #1a1a1a;
+    color: var(--white);
+}
+
+.modal-header {
+    border-bottom-color: #2a2a2a;
+}
+
+.modal-footer {
+    border-top-color: #2a2a2a;
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.dropdown-menu {
+    background-color: #1a1a1a;
+    border-color: #2a2a2a;
+}
+
+.dropdown-item {
+    color: var(--white);
+}
+
+.dropdown-item:hover {
+    background-color: var(--orange);
+    color: var(--white);
+}
+
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+.min-vh-80 {
+    min-height: 80vh;
+}
+
+.card-img-wrapper {
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.stock-agotado {
+    border-left: 4px solid #dc3545;
+}
+.stock-bajo {
+    border-left: 4px solid #ffc107;
+}
+.stock-normal {
+    border-left: 4px solid #198754;
+}
+
+.badge-stock-agotado {
+    background-color: #dc3545;
+    color: white;
+}
+.badge-stock-bajo {
+    background-color: #ffc107;
+    color: #121212;
+}
+.badge-stock-normal {
+    background-color: #198754;
+    color: white;
+}
+
+.card-header.bg-danger {
+    background-color: #dc3545 !important;
+}
+.card-header.bg-warning {
+    background-color: #ffc107 !important;
+}
+.card-header.bg-success {
+    background-color: #198754 !important;
+}
+
+.table th {
+    border-top: none;
+}
+.table td {
+    vertical-align: middle;
+}
+
+.page-link {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+    color: var(--white);
+}
+.page-link:hover {
+    background-color: var(--orange);
+    border-color: var(--orange);
+    color: var(--white);
+}
+.page-item.disabled .page-link {
+    background-color: #1a1a1a;
+    border-color: #2a2a2a;
+    color: #6c757d;
+}
+
+@media print {
+    .navbar, .btn { display: none !important; }
+    .card { border: 1px solid #dee2e6 !important; }
+    body { background: white !important; color: black !important; }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--orange);
+}

@@ -1,0 +1,20 @@
+{% load static %}
+{% for prod in productos %}
+<div class="col-6 col-md-4 col-lg-3">
+    <div class="card h-100 border-secondary text-center p-2 producto-card"
+         onclick="agregarAlCarrito({{ prod.id }}, '{{ prod.nombre|escapejs }}', {{ prod.precio }})"
+         style="cursor: pointer;">
+        {% if prod.imagen %}
+        <img src="{{ prod.imagen.url }}" class="card-img-top rounded" style="height: 60px; object-fit: cover;" alt="{{ prod.nombre }}">
+        {% else %}
+        <div class="py-2">🍽️</div>
+        {% endif %}
+        <small class="fw-bold">{{ prod.nombre }}</small>
+        <small class="text-warning">${{ prod.precio|floatformat:2 }}</small>
+    </div>
+</div>
+{% empty %}
+<div class="col-12">
+    <p class="text-muted text-center py-3">No se encontraron productos disponibles.</p>
+</div>
+{% endfor %}

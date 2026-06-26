@@ -1,0 +1,50 @@
+.cocina-kanban .card-body {
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a3a #1a1a1a;
+}
+
+.orden-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border-left: 4px solid transparent;
+}
+
+.orden-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 122, 0, 0.15);
+}
+
+#columna-pendiente .orden-card {
+    border-left-color: #dc3545;
+}
+
+#columna-preparacion .orden-card {
+    border-left-color: #ffc107;
+}
+
+#columna-listo .orden-card {
+    border-left-color: #198754;
+}
+
+.card-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+#posProductos .producto-card {
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+#posProductos .producto-card:hover {
+    transform: scale(1.03);
+    border-color: var(--orange);
+}
+
+@media (max-width: 768px) {
+    .cocina-kanban .row {
+        flex-direction: column;
+    }
+    .cocina-kanban .card-body {
+        max-height: 40vh !important;
+    }
+}

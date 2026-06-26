@@ -1,0 +1,36 @@
+{% load static %}
+{% for p in productos %}
+<tr>
+    <td>{{ forloop.counter }}</td>
+    <td>
+        <a href="{% url 'productos:detail' p.pk %}" class="text-warning text-decoration-none">
+            {{ p.nombre }}
+        </a>
+    </td>
+    <td>{{ p.categoria.nombre }}</td>
+    <td>${{ p.precio|floatformat:2 }}</td>
+    <td>
+        {% if p.stock == 0 %}
+        <span class="badge bg-danger">{{ p.stock }}</span>
+        {% elif p.stock <= umbral %}
+        <span class="badge bg-warning text-dark">{{ p.stock }}</span>
+        {% else %}
+        <span class="badge bg-success">{{ p.stock }}</span>
+        {% endif %}
+    </td>
+    <td>${{ p.precio|floatformat:2 }}</td>
+    <td>
+        {% if p.stock == 0 %}
+        <span class="badge bg-danger">Agotado</span>
+        {% elif p.stock <= umbral %}
+        <span class="badge bg-warning text-dark">Pocas Und.</span>
+        {% else %}
+        <span class="badge bg-success">En Stock</span>
+        {% endif %}
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="7" class="text-center text-muted py-4">No se encontraron productos.</td>
+</tr>
+{% endfor %}

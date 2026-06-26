@@ -1,0 +1,59 @@
+{% extends "productos/base.html" %}
+{% load static %}
+
+{% block title %}Cocina{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'cocina/css/cocina.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0">Cocina 🍳</h1>
+    <a href="{% url 'cocina:pos' %}" class="btn btn-warning fw-bold">
+        + Nueva Orden
+    </a>
+</div>
+
+<div class="cocina-kanban" id="cocinaKanban">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card border-danger h-100">
+                <div class="card-header bg-danger text-white d-flex justify-content-between" style="cursor: pointer;">
+                    <h5 class="mb-0 fw-bold">Pendientes</h5>
+                    <span class="badge bg-light text-danger fs-6" id="count-pendiente">{{ pendientes|length }}</span>
+                </div>
+                <div class="card-body p-2" id="columna-pendiente" style="max-height: 70vh; overflow-y: auto;">
+                    {% include "cocina/_orden_column.html" with ordenes=pendientes columna="pendiente" titulo="Pendientes" %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between" style="cursor: pointer;">
+                    <h5 class="mb-0 fw-bold">En Preparación</h5>
+                    <span class="badge bg-dark text-warning fs-6" id="count-preparacion">{{ en_preparacion|length }}</span>
+                </div>
+                <div class="card-body p-2" id="columna-preparacion" style="max-height: 70vh; overflow-y: auto;">
+                    {% include "cocina/_orden_column.html" with ordenes=en_preparacion columna="preparacion" titulo="En Preparación" %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-success h-100">
+                <div class="card-header bg-success text-white d-flex justify-content-between" style="cursor: pointer;">
+                    <h5 class="mb-0 fw-bold">Listos</h5>
+                    <span class="badge bg-light text-success fs-6" id="count-listo">{{ listos|length }}</span>
+                </div>
+                <div class="card-body p-2" id="columna-listo" style="max-height: 70vh; overflow-y: auto;">
+                    {% include "cocina/_orden_column.html" with ordenes=listos columna="listo" titulo="Listos" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'cocina/js/cocina.js' %}"></script>
+{% endblock %}

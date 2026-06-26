@@ -1,0 +1,55 @@
+{% extends "productos/base.html" %}
+{% load static %}
+
+{% block title %}Categorías{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0">Categorías</h1>
+    <a href="{% url 'productos:categoria_create' %}" class="btn btn-warning fw-bold">
+        + Nueva Categoría
+    </a>
+</div>
+
+<div class="card bg-dark border-secondary">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Productos</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat in categorias %}
+                    <tr>
+                        <td class="fw-bold">{{ cat.nombre }}</td>
+                        <td class="text-muted">{{ cat.descripcion|default:"-" }}</td>
+                        <td><span class="badge bg-info">{{ cat.total_productos }}</span></td>
+                        <td>
+                            {% if cat.estado %}
+                            <span class="badge bg-success">Activa</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'productos:categoria_update' cat.pk %}" class="btn btn-sm btn-outline-warning">Editar</a>
+                            <a href="{% url 'productos:categoria_delete' cat.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No hay categorías registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

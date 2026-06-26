@@ -1,0 +1,51 @@
+{% for orden in ordenes %}
+<div class="card bg-dark border-secondary mb-2 orden-card" data-orden-id="{{ orden.id }}" data-estado="{{ orden.estado }}">
+    <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+                <strong class="text-warning">#{{ orden.id }}</strong>
+                <small class="text-muted ms-2">{{ orden.cliente|default:orden.mesa|default:"-" }}</small>
+            </div>
+            <small class="text-muted">
+                {% with delta=orden.creada|timesince %}{{ delta }}{% endwith %}
+            </small>
+        </div>
+        {% for detalle in orden.detalles.all %}
+        <div class="d-flex justify-content-between small mb-1">
+            <span>{{ detalle.cantidad }}x {{ detalle.producto.nombre }}</span>
+            {% if detalle.nota %}
+            <small class="text-warning ms-2">📝 {{ detalle.nota }}</small>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% if orden.nota %}
+        <div class="mt-1 small text-info">📝 {{ orden.nota }}</div>
+        {% endif %}
+        <div class="mt-2 d-flex gap-1">
+            {% if columna == "pendiente" %}
+            <form method="post" action="{% url 'cocina:cambiar_estado' orden.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="estado" value="preparacion">
+                <button type="submit" class="btn btn-sm btn-warning">Iniciar</button>
+            </form>
+            {% endif %}
+            {% if columna == "preparacion" %}
+            <form method="post" action="{% url 'cocina:cambiar_estado' orden.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="estado" value="listo">
+                <button type="submit" class="btn btn-sm btn-success">Listo</button>
+            </form>
+            {% endif %}
+            {% if columna == "listo" %}
+            <form method="post" action="{% url 'cocina:cambiar_estado' orden.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="estado" value="entregado">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Entregado</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% empty %}
+<p class="text-muted text-center small py-3">No hay órdenes</p>
+{% endfor %}

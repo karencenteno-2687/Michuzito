@@ -1,0 +1,41 @@
+{% load static %}
+{% if productos %}
+<div class="row g-3">
+    {% for producto in productos %}
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="card h-100 border-secondary producto-card"
+             data-producto-id="{{ producto.id }}"
+             style="cursor: pointer;">
+            <div class="card-img-wrapper position-relative" style="height: 180px; overflow: hidden;">
+                {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" class="card-img-top h-100 w-100" style="object-fit: cover;" alt="{{ producto.nombre }}">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center h-100 bg-secondary bg-opacity-25">
+                    <span style="font-size: 3rem;">🍽️</span>
+                </div>
+                {% endif %}
+                {% if not producto.disponibilidad %}
+                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.6);">
+                    <span class="badge bg-danger fs-6">Agotado</span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-body text-center">
+                <h6 class="card-title fw-bold mb-1">{{ producto.nombre }}</h6>
+                <p class="text-warning fw-bold fs-5 mb-1">${{ producto.precio|floatformat:0|add:"" }}</p>
+                {% if producto.disponibilidad %}
+                <span class="badge bg-success">Disponible</span>
+                {% else %}
+                <span class="badge bg-danger">Agotado</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <span style="font-size: 4rem;">🍽️</span>
+    <p class="text-muted mt-3">No se encontraron productos.</p>
+</div>
+{% endif %}
